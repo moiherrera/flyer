@@ -4,7 +4,7 @@ const express = require('express')
 const passport = require('passport')
 
 // pull in Mongoose model for flyers
-const Message = require('../models/flyer')
+const Flyer = require('../models/flyer')
 
 // this is a collection of methods that help us detect situations when we need
 // to throw a custom error
@@ -17,7 +17,6 @@ const handle404 = customErrors.handle404
 const requireOwnership = customErrors.requireOwnership
 
 // this is middleware that will remove blank fields from `req.body`, e.g.
-// { message: { title: '', text: 'foo' } } -> { message: { text: 'foo' } }
 const removeBlanks = require('../../lib/remove_blank_fields')
 // passing this as a second argument to `router.<verb>` will make it
 // so that a token MUST be passed for that route to be available
@@ -30,16 +29,16 @@ const router = express.Router()
 // INDEX
 // GET /flyers
 router.get('/flyers', (req, res, next) => {
-  Message.find()
+  Flyer.find()
     .populate('owner')
-    .then(messages => {
+    .then(flyers => {
       // `flyers` will be an array of Mongoose documents
       // we want to convert each one to a POJO, so we use `.map` to
       // apply `.toObject` to each one
-      return messages.map(message => message.toObject())
+      return flyers.map(flyer => flyer.toObject())
     })
     // respond with status 200 and JSON of the flyers
-    .then(messages => res.status(200).json({ flyers: flyers }))
+    .then(flyers => res.status(200).json({ flyers: flyers }))
     // if an error occurs, pass it to the handler
     .catch(next)
 })
@@ -67,7 +66,7 @@ router.patch('/flyers/:id', requireToken, removeBlanks, (req, res, next) => {
   // owner, prevent that by deleting that key/value pair
   delete req.body.flyer.owner
 
-  Message.findById(req.params.id)
+  Flyer.findById(req.params.id)
     .then(handle404)
     .then(flyer => {
       // pass the `req` object and the Mongoose record to `requireOwnership`
