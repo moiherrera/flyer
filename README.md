@@ -1,3 +1,9 @@
+BACK-END:
+REPO:https://github.com/moiherrera/flyer
+DEPLOYED: https://arcane-ocean-83657.herokuapp.com/
+
+
+
 FLYER
 See the events happening in your city, right now.
 A platform to view flyers of events happening in your city. Post your own flyers if you’d like!
